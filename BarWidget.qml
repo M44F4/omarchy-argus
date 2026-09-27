@@ -750,6 +750,17 @@ Panel {
               spacing: Style.space(4)
 
               PanelActionButton {
+                iconText: "\u{f0128}"
+                tooltipText: "Open btop"
+                visible: root.setting("showBtopButton", true)
+                foreground: root.foreground
+                fontFamily: root.fontFamily
+                fontSize: Style.font.subtitle
+                size: Style.space(28)
+                onClicked: if (root.bar) root.bar.run("omarchy-launch-or-focus-tui btop")
+              }
+
+              PanelActionButton {
                 iconText: "\u{f0493}"
                 tooltipText: "Setup"
                 visible: root.setting("showSetupButton", true)
@@ -2398,6 +2409,27 @@ Panel {
                 foreground: root.foreground
                 accent: Color.accent
                 onToggled: root.persistPluginSetting("showSetupButton", !root.setting("showSetupButton", true))
+              }
+            }
+
+            RowLayout {
+              width: parent.width
+              spacing: Style.space(8)
+
+              Text {
+                Layout.fillWidth: true
+                text: "Show btop button"
+                color: root.foreground
+                font.family: root.fontFamily
+                font.pixelSize: Style.font.body
+                elide: Text.ElideRight
+              }
+
+              ToggleSwitch {
+                checked: root.setting("showBtopButton", true)
+                foreground: root.foreground
+                accent: Color.accent
+                onToggled: root.persistPluginSetting("showBtopButton", !root.setting("showBtopButton", true))
               }
             }
 
