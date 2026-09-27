@@ -563,8 +563,7 @@ Panel {
     fixedWidth: !(root.bar && root.bar.vertical) && root.placeholderOnly ? Style.bar.iconSlot : -1
     fixedHeight: root.bar && root.bar.vertical ? root.verticalLines.length * Style.bar.iconSlot : -1
     tooltipText: Service.ready
-      ? Service.host + " · up " + Model.fmtUptime(Service.uptimeSec) + " · load " + Service.load1.toFixed(2)
-        + (Service.battery ? " · bat " + Model.fmtPct(Service.battery.pct) + " " + Service.battery.status.toLowerCase() : "")
+      ? Model.hoverText(root.setting("hover", Model.DEFAULT_HOVER), Service.barData, Service.host, Service.uptimeSec)
       : "Argus"
 
     onPressed: function(b) {
@@ -2351,6 +2350,39 @@ Panel {
                   foreground: root.foreground
                   accent: Color.accent
                   onToggled: root.toggleHomeTile(homeConfigRow.modelData.key)
+                }
+              }
+            }
+
+            PanelSectionHeader {
+              text: "SHOW ON HOVER"
+              foreground: root.foreground
+              fontFamily: root.fontFamily
+            }
+
+            Repeater {
+              model: Model.HOVER_ITEMS
+
+              RowLayout {
+                id: hoverRow
+                required property var modelData
+                width: parent.width
+                spacing: Style.space(8)
+
+                Text {
+                  Layout.fillWidth: true
+                  text: hoverRow.modelData.label
+                  color: root.foreground
+                  font.family: root.fontFamily
+                  font.pixelSize: Style.font.body
+                  elide: Text.ElideRight
+                }
+
+                ToggleSwitch {
+                  checked: root.setting("hover", Model.DEFAULT_HOVER).indexOf(hoverRow.modelData.key) !== -1
+                  foreground: root.foreground
+                  accent: Color.accent
+                  onToggled: root.persistPluginSetting("hover", Model.toggleHover(root.setting("hover", Model.DEFAULT_HOVER), hoverRow.modelData.key))
                 }
               }
             }
