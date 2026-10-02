@@ -2041,8 +2041,22 @@ var HOVER_ITEMS = [
 
 var DEFAULT_HOVER = ["host", "uptime", "load", "bat"]
 
+function hoverItemByKey(key) {
+  for (var i = 0; i < HOVER_ITEMS.length; i++) if (HOVER_ITEMS[i].key === key) return HOVER_ITEMS[i]
+  return null
+}
+
+function normalizeHover(value) {
+  var list = value instanceof Array ? value : DEFAULT_HOVER
+  var result = []
+  for (var i = 0; i < list.length; i++) {
+    if (hoverItemByKey(list[i]) !== null && result.indexOf(list[i]) === -1) result.push(list[i])
+  }
+  return result
+}
+
 function hoverText(keys, data, host, uptimeSec) {
-  var list = keys instanceof Array ? keys : DEFAULT_HOVER
+  var list = normalizeHover(keys)
   var parts = []
   for (var i = 0; i < HOVER_ITEMS.length; i++) {
     var item = HOVER_ITEMS[i]
@@ -2061,10 +2075,10 @@ function hoverText(keys, data, host, uptimeSec) {
 }
 
 function toggleHover(current, key) {
-  var list = (current instanceof Array ? current : DEFAULT_HOVER).slice()
+  var list = normalizeHover(current)
   var index = list.indexOf(key)
   if (index >= 0) list.splice(index, 1)
-  else list.push(key)
+  else if (hoverItemByKey(key) !== null) list.push(key)
   return list
 }
 
@@ -2103,6 +2117,7 @@ if (typeof module !== "undefined") {
     DEFAULT_SHOW: DEFAULT_SHOW,
     HOVER_ITEMS: HOVER_ITEMS,
     DEFAULT_HOVER: DEFAULT_HOVER,
+    normalizeHover: normalizeHover,
     hoverText: hoverText,
     toggleHover: toggleHover,
     DEFAULT_THRESHOLDS: DEFAULT_THRESHOLDS,
