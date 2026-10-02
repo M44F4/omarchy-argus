@@ -48,7 +48,7 @@ order in the panel's **SETUP** tab; the choice persists to
 - **PWR** — measured power draw per source: CPU package and friends via RAPL (with an honest hint when the kernel keeps the counters root-only — see Power below), every GPU, battery discharge, draw sparklines with session peaks, and session energy totals in Wh
 - **GAME** — the in-game HUD's control room: pick which metrics MangoHud shows (FPS, frametime graph, CPU/GPU stats, VRAM…), give them custom labels, set position, font size, opacity, compact mode, the toggle hotkey — and match the overlay to your Omarchy theme. Changes apply live to running games
 - **ALERTS** — every alert with its opt-in toggle and inline threshold stepper (all off by default), the per-sensor alerts armed from the TEMP tab, and the fired-alert log with context snapshots
-- **SETUP** — toggles and reorder arrows for which metrics the bar shows, the Home-tile picker, panel settings (°C/°F, refresh interval), and Argus's own measured sampling cost
+- **SETUP** — also opened from the gear icon next to refresh: toggles and reorder arrows for which metrics the bar shows, the Home-tile picker, panel settings (°C/°F, refresh interval), and Argus's own measured sampling cost
 
 A watch row under the host name keeps every vital — CPU, RAM, CPU/GPU
 temperature, disk, battery — visible on every tab. A vital turns urgent
@@ -134,6 +134,8 @@ Inline settings on the widget's entry in `shell.json`:
 | `show` | `["cpu", "ram", "cputemp"]` | Metric keys shown in the bar, in display order |
 | `intervalSec` | `2` | Poll interval in seconds, 1–60 (edited from the SETUP tab) |
 | `tempUnit` | `"C"` | Temperature display unit, `"C"` or `"F"` (edited from the SETUP tab; everything is measured and stored in °C) |
+| `showSetupTab` | `true` | Show SETUP in the tab strip (always shown when the SETUP button is hidden) |
+| `showSetupButton` | `true` | Show the SETUP button in the panel header |
 | `diskMount` | `/` | Mount point used by the bar's disk metric |
 | `alerts` | `"On"` | Master switch over every alert notification |
 | `alertCommand` | — | Shell command run on every fired alert (see below) |
