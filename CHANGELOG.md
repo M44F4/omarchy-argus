@@ -12,6 +12,9 @@ follow [Semantic Versioning](https://semver.org/).
   button (`showSetupButton`) or the SETUP tab in the strip
   (`showSetupTab`); the tab is always shown while the button is hidden,
   so settings can never become unreachable.
+- **An Open btop button in the panel header.** Next to the SETUP gear,
+  it opens btop just like right-clicking the bar button. A new PANEL
+  toggle hides it (`showBtopButton`).
 
 ### Fixed
 - **ARM machines showed no CPU name, and the Raspberry Pi no CPU
