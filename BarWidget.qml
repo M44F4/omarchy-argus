@@ -89,8 +89,17 @@ Panel {
     t.push("PWR")
     t.push("GAME")
     t.push("ALERTS")
-    if (setting("showSetupTab", true) || !setting("showSetupButton", true)) t.push("SETUP")
+    if (setupTabForced || setting("showSetupTab", true)) t.push("SETUP")
     return t
+  }
+
+  // With the header button hidden the tab is the only way into SETUP, so
+  // it stays in the strip whatever showSetupTab says.
+  readonly property bool setupTabForced: !setting("showSetupButton", true)
+
+  // SETUP stays reachable (header button, IPC) even when the strip hides it.
+  function hasTab(name) {
+    return name === "SETUP" || tabs.indexOf(name) !== -1
   }
 
   // ---- GAME tab (MangoHud) ----------------------------------------------
@@ -108,7 +117,10 @@ Panel {
   property string tab: "HOME"
 
   function switchTab(direction) {
-    var index = (tabs.indexOf(tab) + direction + tabs.length) % tabs.length
+    var current = tabs.indexOf(tab)
+    // A hidden SETUP sits after the last tab: next wraps to HOME, previous is ALERTS.
+    if (current === -1) current = direction > 0 ? -1 : tabs.length
+    var index = (current + direction + tabs.length) % tabs.length
     tab = tabs[index]
   }
 
@@ -124,7 +136,7 @@ Panel {
     // immediately on arrival instead of waiting out the tick.
     if (tab === "PROC" && opened) Service.refresh(true)
   }
-  onTabsChanged: if (tab !== "SETUP" && tabs.indexOf(tab) === -1) tab = "HOME"
+  onTabsChanged: if (!hasTab(tab)) tab = "HOME"
 
   // ---- Home tab ---------------------------------------------------------
   // Which tiles the user enabled, minus hardware this machine lacks.
@@ -458,7 +470,7 @@ Panel {
     if (opened) {
       Service.panelOpened()
       // Reopen where the user left off; an urgent metric still wins.
-      if (tabs.indexOf(Service.lastTab) !== -1) tab = Service.lastTab
+      if (hasTab(Service.lastTab)) tab = Service.lastTab
       // Land on the tab that explains the problem, if there is one.
       for (var i = 0; i < barSegs.length; i++) {
         if (!barSegs[i].urgent) continue
@@ -527,7 +539,7 @@ Panel {
     function tab(name: string): string {
       var upper = String(name).toUpperCase()
       if (upper === "BAR") upper = "SETUP" // pre-1.0 scripts
-      if (upper !== "SETUP" && root.tabs.indexOf(upper) === -1) return "unknown tab; use " + root.tabs.join("|")
+      if (!root.hasTab(upper)) return "unknown tab; use " + root.tabs.join("|")
       root.tab = upper
       return "ok"
     }
@@ -2376,15 +2388,17 @@ Panel {
 
               Text {
                 Layout.fillWidth: true
-                text: "Show SETUP tab"
-                color: root.foreground
+                text: root.setupTabForced ? "Show SETUP tab (on while button hidden)" : "Show SETUP tab"
+                color: root.setupTabForced ? root.dim : root.foreground
                 font.family: root.fontFamily
                 font.pixelSize: Style.font.body
                 elide: Text.ElideRight
               }
 
               ToggleSwitch {
-                checked: root.setting("showSetupTab", true)
+                checked: root.setupTabForced || root.setting("showSetupTab", true)
+                interactive: !root.setupTabForced
+                opacity: root.setupTabForced ? 0.4 : 1
                 foreground: root.foreground
                 accent: Color.accent
                 onToggled: root.persistPluginSetting("showSetupTab", !root.setting("showSetupTab", true))
