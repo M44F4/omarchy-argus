@@ -6,6 +6,13 @@ follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- **A SETUP button in the panel header.** A gear next to refresh opens
+  SETUP from any tab (and back to HOME). Two new PANEL toggles hide the
+  button (`showSetupButton`) or the SETUP tab in the strip
+  (`showSetupTab`); the tab is always shown while the button is hidden,
+  so settings can never become unreachable.
+
 ### Fixed
 - **ARM machines showed no CPU name, and the Raspberry Pi no CPU
   temperature.** ARM `/proc/cpuinfo` has no `model name` line, so the
